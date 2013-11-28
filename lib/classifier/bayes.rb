@@ -15,6 +15,11 @@ class Bayes
 		@extract_features_block = nil
 	end
 
+	def dump
+		@extract_features_block
+		Marshal::dump(self)
+	end
+
 	#
 	# Provides a general training method for all categories specified in Bayes#new
 	# For example:
