@@ -12,6 +12,7 @@ class Bayes
 		@categories = Hash.new
 		categories.each { |category| @categories[category.prepare_category_name] = Hash.new }
 		@total_words = 0
+		@extract_features_block = nil
 	end
 
 	#
@@ -23,10 +24,30 @@ class Bayes
 	#     b.train "The other", "The other text"
 	def train(category, text)
 		category = category.prepare_category_name
-		text.word_hash.each do |word, count|
+		self.extract_features(text).each do |word, count|
 			@categories[category][word]     ||=     0
 			@categories[category][word]      +=     count
 			@total_words += count
+		end
+	end
+
+	# 
+	# Allows developers to specify a feature extraction function
+	# For example:
+	# 	Proc.new { |text| text.word_hash }
+	def set_feature_extraction_proc(proc)
+		@extract_features_block = proc
+	end
+
+	#
+	# Extract features from a block of text
+	# Uses a provided block if present and defaults to word_hash otherwise
+	#
+	def extract_features(text)
+		if @extract_features_block.present?
+			return @extract_features_block.call(text)
+		else
+			return text.word_hash
 		end
 	end
 
@@ -40,7 +61,7 @@ class Bayes
 	#     b.untrain :this, "This text"
 	def untrain(category, text)
 		category = category.prepare_category_name
-		text.word_hash.each do |word, count|
+		self.extract_features(text).each do |word, count|
 			if @total_words >= 0
 				orig = @categories[category][word]
 				@categories[category][word]     ||=     0
@@ -64,7 +85,7 @@ class Bayes
 		@categories.each do |category, category_words|
 			score[category.to_s] = 0
 			total = category_words.values.inject(0) {|sum, element| sum+element}
-			text.word_hash.each do |word, count|
+			self.extract_features(text).each do |word, count|
 				s = category_words.has_key?(word) ? category_words[word] : 0.1
 				score[category.to_s] += Math.log(s/total.to_f)
 			end
