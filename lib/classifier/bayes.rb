@@ -39,7 +39,16 @@ class Bayes
 	# 
 	# Allows developers to specify a feature extraction function
 	# For example:
-	# 	Proc.new { |text| text.word_hash }
+	# 	 	
+	# 	vocab = get_my_vocab() 		# => [:array, :of, :words]
+	# 	
+	# 	# in this example we're only returning words within our vocabulary
+	# 	cb = Proc.new do |text| 
+	# 		text.word_hash.select{|k,v| vocab.include? k }
+	# 	end
+	#
+	# 	b.set_feature_extraction_proc(cb)
+	#
 	def set_feature_extraction_proc(proc)
 		@extract_features_block = proc
 	end

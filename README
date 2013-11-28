@@ -2,6 +2,10 @@
 
 Classifier is a general module to allow Bayesian and other types of classifications.
 
+== This fork
+
+I've added set_feature_extraction_proc to lib/classifier/bayes.rb. Details in the comments.
+
 == Download
 
 * http://rubyforge.org/projects/classifier
