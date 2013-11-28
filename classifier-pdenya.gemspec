@@ -1,6 +1,11 @@
 Gem::Specification.new do |s|
 
   #### Basic information.
+  PKG_VERSION = "1.3.3"
+
+  PKG_FILES = FileList[
+    "lib/**/*", "bin/*", "test/**/*", "[A-Z]*", "Rakefile", "html/**/*"
+  ]
 
   s.name = 'classifier-pdenya'
   s.version = PKG_VERSION
