@@ -42,7 +42,7 @@ spec = Gem::Specification.new do |s|
 
   #### Basic information.
 
-  s.name = 'classifier'
+  s.name = 'classifier-pdenya'
   s.version = PKG_VERSION
   s.summary = <<-EOF
    A general classifier module to allow Bayesian and other types of classifications.
