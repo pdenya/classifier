@@ -7,7 +7,7 @@ require 'rake/contrib/rubyforgepublisher'
 Gem::Specification.new do |s|
 
   #### Basic information.
-  PKG_VERSION = "1.3.4"
+  PKG_VERSION = "1.3.5"
 
   PKG_FILES = FileList[
     "lib/**/*", "bin/*", "test/**/*", "[A-Z]*", "Rakefile", "html/**/*"
