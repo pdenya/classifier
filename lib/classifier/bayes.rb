@@ -16,7 +16,7 @@ class Bayes
 	end
 
 	def dump
-		@extract_features_block
+		@extract_features_block = nil
 		Marshal::dump(self)
 	end
 
