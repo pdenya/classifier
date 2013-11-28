@@ -1,3 +1,10 @@
+require 'rubygems'
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
+require 'rake/gempackagetask'
+require 'rake/contrib/rubyforgepublisher'
+
 Gem::Specification.new do |s|
 
   #### Basic information.
