@@ -180,7 +180,7 @@ class Bayes
       p = 1.0
       features = self.extract_features(text)
       features.each do |feature, count|
-        p *= self.weighted_prob(feature, category)
+        p *= self.weighted_feature_prob(feature, category)
       end
       
 
