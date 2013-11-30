@@ -16,11 +16,9 @@ class Bayes
 
 		categories.each { |category| @categories[category.prepare_category_name] = Hash.new }
 		@total_words = 0
-		@extract_features_block = nil
 	end
 
 	def dump
-		@extract_features_block = nil
 		Marshal::dump(self)
 	end
 
@@ -45,21 +43,12 @@ class Bayes
 		end
 	end
 
-	# 
-	# Allows developers to specify a feature extraction function
-	# For example:
-	# 	 	
-	# 	vocab = get_my_vocab() 		# => [:array, :of, :words]
-	# 	
-	# 	# in this example we're only returning words within our vocabulary
-	# 	cb = Proc.new do |text| 
-	# 		text.word_hash.select{|k,v| vocab.include? k }
-	# 	end
 	#
-	# 	b.set_feature_extraction_proc(cb)
+	# set a vocab to filter with in extract features
 	#
-	def set_feature_extraction_proc(proc)
-		@extract_features_block = proc
+	def vocab(v=nil)
+		@vocab = v if v
+		@vocab
 	end
 
 	#
@@ -67,8 +56,8 @@ class Bayes
 	# Uses a provided block if present and defaults to word_hash otherwise
 	#
 	def extract_features(text)
-		if @extract_features_block.present?
-			return @extract_features_block.call(text)
+		if @vocab
+			return text.word_hash.select{|k,v| @vocab.include? k }
 		else
 			return text.word_hash
 		end
