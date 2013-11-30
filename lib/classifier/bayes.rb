@@ -178,8 +178,8 @@ class Bayes
 
 	def fisher_prob(text, category)
       p = 1.0
-      
-      self.extract_features(text) do |feature, count|
+      features = self.extract_features(text)
+      features.each do |feature, count|
         p *= self.weighted_prob(feature, category)
       end
       
