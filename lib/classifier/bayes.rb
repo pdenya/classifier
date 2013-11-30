@@ -10,6 +10,10 @@ class Bayes
   #      b = Classifier::Bayes.new 'Interesting', 'Uninteresting', 'Spam'
 	def initialize(*categories)
 		@categories = Hash.new
+		
+		@documents = Hash.new
+		@documents['_total'] = 0
+
 		categories.each { |category| @categories[category.prepare_category_name] = Hash.new }
 		@total_words = 0
 		@extract_features_block = nil
@@ -29,6 +33,11 @@ class Bayes
 	#     b.train "The other", "The other text"
 	def train(category, text)
 		category = category.prepare_category_name
+		
+		@documents[category] ||= 0
+		@documents[category] += 1
+		@documents['_total'] += 1
+
 		self.extract_features(text).each do |word, count|
 			@categories[category][word]     ||=     0
 			@categories[category][word]      +=     count
@@ -107,6 +116,57 @@ class Bayes
 		return score
 	end
 
+
+	def feature_prob(feature, category)
+		return 0.1 if !@categories[category]
+
+		#number of times the feature appears in the training data / total features in the category
+		((@categories[category][feature] || 0.0) + 1.0) / @categories[category].length.to_f
+	end
+
+	def weighted_feature_prob(feature, category, weight=1.0, assumed_prob=0.5)
+		basic_prob = self.feature_prob(feature, category)
+
+		#total appear count of this feature in all categories
+		total = @categories.map {|k,v| (v[feature] || 0.0) }.reduce(:+)
+
+		#weighted average
+		((weight * assumed_prob) + (total * basic_prob)) / (weight + total)
+ 	end
+
+
+	def cat_prob(category)
+		# num docs in this category / num docs total
+		(@documents[category] || 0.0) / @documents['_total']
+	end
+
+	
+	def doc_prob(text, category)
+		p = 1.0
+
+		self.extract_features(text).each do |feature, count|
+			p *= self.weighted_feature_prob(feature, category)
+		end
+
+		p
+	end
+
+	
+	def prob(text, category)
+		self.doc_prob(text, category) * self.cat_prob(category)
+	end
+
+	
+	def probs(text)
+		scores = Hash.new
+		@categories.each do |category, category_features|
+			scores[category] = self.prob(text, category)
+		end
+
+		scores
+	end
+
+	
   #
   # Returns the classification of the provided +text+, which is one of the 
   # categories given in the initializer. E.g.,
