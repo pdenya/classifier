@@ -156,11 +156,53 @@ class Bayes
 		self.doc_prob(text, category) * self.cat_prob(category)
 	end
 
+
+
 	
 	def probs(text)
 		scores = Hash.new
 		@categories.each do |category, category_features|
 			scores[category] = self.prob(text, category)
+		end
+
+		scores
+	end
+
+	#inverse chi-square
+	def invchi2(chi, df)
+		m = chi / 2.0
+		sum = term = Math.exp(-m)
+		(1..(df/2).to_i).each do |i|
+			term *= m / i
+			sum += term
+		end
+		[sum, 1.0].min
+	end
+
+	def cprob(feature, cat)
+		clf = self.feature_prob(feature, cat)
+		return 0.0 if clf == 0
+
+		freqsum = @categories.map{|c,v| self.feature_prob(feature, c) }.reduce(:+)
+		clf / freqsum
+	end
+
+	def fisher_prob(text, category)
+      p = 1.0
+      
+      self.extract_features(text) do |feature, count|
+        p *= self.weighted_prob(feature, category)
+      end
+      
+
+      fscore = -2 * Math.log(p)
+      self.invchi2(fscore, features.length * 2)
+    end
+
+    def fisher_probs(text)
+		scores = Hash.new
+		@categories.each do |category, category_features|
+			scores[category] = self.fisher_prob(text, category)
 		end
 
 		scores
