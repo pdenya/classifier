@@ -56,7 +56,9 @@ class Bayes
 	# Uses a provided block if present and defaults to word_hash otherwise
 	#
 	def extract_features(text)
-		if @vocab
+		if text.is_a?(Hash)
+			return text
+		elsif @vocab
 			return text.word_hash.select{|k,v| @vocab.include? k }
 		else
 			return text.word_hash
@@ -145,8 +147,6 @@ class Bayes
 		self.doc_prob(text, category) * self.cat_prob(category)
 	end
 
-
-
 	
 	def probs(text)
 		scores = Hash.new
@@ -180,11 +180,11 @@ class Bayes
       p = 1.0
       features = self.extract_features(text)
       features.each do |feature, count|
-        p *= self.weighted_feature_prob(feature, category)
+        p += Math.log(self.weighted_feature_prob(feature, category))
       end
       
 
-      fscore = -2 * Math.log(p)
+      fscore = -2 * p
       self.invchi2(fscore, features.length * 2)
     end
 
