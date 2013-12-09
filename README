@@ -4,7 +4,7 @@ Classifier is a general module to allow Bayesian and other types of classificati
 
 == This fork
 
-I've added set_feature_extraction_proc to lib/classifier/bayes.rb. Details in the comments.
+Added the ability to pass word hashes directly rather than passing strings that will be split. Details in lib/classifier/bayes.rb.
 
 == Download
 
