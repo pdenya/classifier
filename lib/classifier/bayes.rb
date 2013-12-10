@@ -56,13 +56,18 @@ class Bayes
 	# Uses a provided block if present and defaults to word_hash otherwise
 	#
 	def extract_features(text)
-		if text.is_a?(Hash)
-			return text
-		elsif @vocab
-			return text.word_hash.select{|k,v| @vocab.include? k }
-		else
-			return text.word_hash
+		#convert strings to hash
+		if !text.is_a?(Hash)
+			text = text.word_hash
 		end
+
+		#filter
+		if @vocab
+			text = text.select{|k,v| @vocab.include? k }
+		end
+
+		#return
+		text
 	end
 
 	#
@@ -123,7 +128,7 @@ class Bayes
 
 		#weighted average
 		((weight * assumed_prob) + (total * basic_prob)) / (weight + total)
- 	end
+	end
 
 
 	def cat_prob(category)
@@ -177,18 +182,18 @@ class Bayes
 	end
 
 	def fisher_prob(text, category)
-      p = 1.0
-      features = self.extract_features(text)
-      features.each do |feature, count|
-        p += Math.log(self.weighted_feature_prob(feature, category))
-      end
-      
+	  p = 1.0
+	  features = self.extract_features(text)
+	  features.each do |feature, count|
+		p += Math.log(self.weighted_feature_prob(feature, category))
+	  end
+	  
 
-      fscore = -2 * p
-      self.invchi2(fscore, features.length * 2)
-    end
+	  fscore = -2 * p
+	  self.invchi2(fscore, features.length * 2)
+	end
 
-    def fisher_probs(text)
+	def fisher_probs(text)
 		scores = Hash.new
 		@categories.each do |category, category_features|
 			scores[category] = self.fisher_prob(text, category)
@@ -222,7 +227,7 @@ class Bayes
 		elsif name.to_s =~ /(un)?train_([\w]+)/
 			raise StandardError, "No such category: #{category}"
 		else
-	    super  #raise StandardError, "No such method: #{name}"
+		super  #raise StandardError, "No such method: #{name}"
 		end
 	end
 	
