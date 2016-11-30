@@ -1,3 +1,15 @@
+## Changes from cardmagic/classifier
+
+- added a vocab param to filter with in extract features
+- added some feature probability methods
+- added fisher methods
+
+See commit history
+
+
+# cardmagic/classifier README
+
+
 ## Welcome to Classifier
 
 Classifier is a general module to allow Bayesian and other types of classifications.
